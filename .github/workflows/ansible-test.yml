@@ -21,10 +21,10 @@ jobs:
         sudo apt install -y ansible ansible-lint yamllint
 
     - name: Run yamllint
-      run: yamllint audit.yml
+      run: yamllint audit_role/aaa_audit_playbook.yml
 
     - name: Run ansible-lint
-      run: ansible-lint audit.yml
+      run: ansible-lint audit_role/aaa_audit_playbook.yml
 
     - name: Syntax check Ansible playbook
-      run: ansible-playbook --syntax-check audit.yml
+      run: ansible-playbook --syntax-check audit_role/aaa_audit_playbook.yml
