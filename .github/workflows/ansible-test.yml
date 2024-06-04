@@ -3,31 +3,40 @@ name: Ansible Test
 on:
   push:
     branches:
-      - main  # Run on push to the main branch
+      - main
   pull_request:
     branches:
-      - main  # Run on pull request targeting the main branch
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install Ansible and dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y ansible ansible-lint yamllint
+    - name: Install Ansible and dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y ansible ansible-lint yamllint
 
-      - name: Find all YAML files
-        id: find_yaml_files
-        run: |
-          echo "::set-output name=yaml_files::$(find . -name '*.yml' -o -name '*.yaml')"
+    - name: Run yamllint on all YAML files
+      run: |
+        find . -name '*.yml' -print0 | while IFS= read -r -d '' file; do
+          echo "Running yamllint on $file"
+          yamllint "$file"
+        done
 
-      - name: Run yamllint
-        run: |
-          for file in ${{ steps.find_yaml_files.outputs.yaml_files }}; do
-            echo "Linting $file"
-            yamllint $file
-          done
+    - name: Run ansible-lint on all YAML files
+      run: |
+        find . -name '*.yml' -print0 | while IFS= read -r -d '' file; do
+          echo "Running ansible-lint on $file"
+          ansible-lint "$file"
+        done
+
+    - name: Syntax check Ansible playbooks
+      run: |
+        find . -name '*.yml' -print0 | while IFS= read -r -d '' file; do
+          echo "Running syntax check on Ansible playbook: $file"
+          ansible-playbook --syntax-check "$file"
+        done
