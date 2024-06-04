@@ -37,6 +37,8 @@ jobs:
     - name: Syntax check Ansible playbooks
       run: |
         find . -name '*.yml' -print0 | while IFS= read -r -d '' file; do
-          echo "Running syntax check on Ansible playbook: $file"
-          ansible-playbook --syntax-check "$file"
+          if [[ $file != "./.github/"* ]]; then
+            echo "Running syntax check on Ansible playbook: $file"
+            ansible-playbook --syntax-check "$file"
+          fi
         done
