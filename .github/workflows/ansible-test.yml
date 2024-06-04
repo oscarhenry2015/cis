@@ -1,3 +1,4 @@
+---
 name: Ansible Test
 
 on:
@@ -12,33 +13,33 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Install Ansible and dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y ansible ansible-lint yamllint
+      - name: Install Ansible and dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y ansible ansible-lint yamllint
 
-    - name: Find all YAML files
-      id: find_yaml_files
-      run: |
-        echo "yaml_files=$(find . -name '*.yml' -o -name '*.yaml')" >> $GITHUB_ENV
+      - name: Find all YAML files
+        id: find_yaml_files
+        run: |
+          echo "yaml_files=$(find . -name '*.yml' -o -name '*.yaml')" >> $GITHUB_ENV
 
-    - name: Run yamllint
-      run: |
-        for file in ${{ env.yaml_files }}; do
-          yamllint $file
-        done
+      - name: Run yamllint
+        run: |
+          for file in ${{ env.yaml_files }}; do
+            yamllint $file
+          done
 
-    - name: Run ansible-lint
-      run: |
-        for file in ${{ env.yaml_files }}; do
-          ansible-lint $file
-        done
+      - name: Run ansible-lint
+        run: |
+          for file in ${{ env.yaml_files }}; do
+            ansible-lint $file
+          done
 
-    - name: Syntax check Ansible playbooks
-      run: |
-        for file in ${{ env.yaml_files }}; do
-          ansible-playbook --syntax-check $file
-        done
+      - name: Syntax check Ansible playbooks
+        run: |
+          for file in ${{ env.yaml_files }}; do
+            ansible-playbook --syntax-check $file
+          done
